@@ -3,8 +3,8 @@ using System.Collections;
 
 public class AttackMelee : MonoBehaviour {
 
-    public Transform target;
-    public float degree;
+    public Transform target;        //is the Object where the melee weapon is attached to. normal is some kind of body
+    public float degree;            //degree
     public float speed;
 
     // Use this for initialization
@@ -15,30 +15,34 @@ public class AttackMelee : MonoBehaviour {
     // Update is called once per frame
     void Update()
     {
-        Debug.Log("Z: " +target.parent.transform.rotation.z);
-        Debug.Log("Z + DEGREE: " + (target.parent.transform.rotation.z + degree));
 
-        target.transform.rotation = Quaternion.Euler(0, 0, target.parent.transform.rotation.z);
-        //target.transform.rotation = target.parent.transform.rotation;
-        //Debug.Log(target.transform.rotation.z);
+
+        target.transform.rotation = target.parent.transform.rotation;
+        Debug.Log("normal: " + target.transform.rotation);
 
         if (Input.GetMouseButtonDown(0))
         {
-            
-            smoothRotation();
 
+            //smoothRotation(angle);
+            Debug.Log("click: " + target.transform.rotation);
+            target.transform.rotation = Quaternion.Slerp(target.transform.rotation, Quaternion.AngleAxis(degree, Vector3.back), speed * Time.deltaTime);
         }
         else
         {
-
+            //target.transform.rotation = Quaternion.Lerp(Quaternion.AngleAxis(angle + degree, Vector3.back), Quaternion.AngleAxis(angle, Vector3.back), speed * Time.deltaTime);
         }
 
 
     }
 
-    void smoothRotation()
+    void smoothRotation(float angle)
     {
 
-        target.transform.rotation = Quaternion.Euler(0, 0, (target.parent.transform.rotation.z + degree));
+        //the target gets a slerp rotation so the melee weapon rotates smooth
+        //Quaternion A = is the actual rotation on Z
+        //Quaternion B = A + the degree to rotate over Z
+        //T = speed = time to go from A to B in 0 to 1
+        //BUGGIE cause slerp doesnt work as it should =P
+        target.transform.rotation = Quaternion.Lerp(Quaternion.AngleAxis(angle, Vector3.forward), Quaternion.AngleAxis(angle + degree, Vector3.forward), speed * 2.0f);
     }
 }
